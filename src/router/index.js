@@ -6,6 +6,7 @@ const routes = [
   {
     path: '/login',
     // component: Login
+    // 路由懒加载
     component: () => import('@/views/Login')
   }
 ]
