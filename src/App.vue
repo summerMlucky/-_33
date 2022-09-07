@@ -5,9 +5,13 @@
 </template>
 
 <script>
-// git
-// 123
-export default {}
+
+export default {
+  created() {},
+  methods: {
+
+  }
+}
 </script>
 
 <style scoped>
