@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // polyfill:垫片
+
+        // 1.executor执行器函数
+        // 2.resolve:把promise变成成功态，reject：把promise变成失败态
+        // 3.value:记录成功的原因reason:失败的原因
+        // 4.promise有三种状态：1.pending 准备态 2.fufilled完成态 3.rejected 拒绝态
+        // 5.Promise状态只能改变一次，pending--->fulfilled  pending---->rejected 不能完成态和拒绝态相互转换
+        // 6.当promise在执行过程中，任何错误都会导致promise变成失败的回调
+        // 7.promise必须有then方法，onFulfilled:成功的回调，onRejected:失败的回调
+        // 8.设计模式：发布订阅模式：订阅一些行为，再在合适时机去执行(发布)
+        // -最简单：DOM事件
+        // -vue当前的自定义事件：$emit
+        // -eventBtn
+        // -promise 异步的时候
+        // 9.promise除了链式调用以外，还可以多次调用
+        const PENDING = 'pending'
+        const FUFILLED = 'fufilled'
+        const REJECTED = 'rejected'
+        class Promise {
+            value
+            reason
+            state = PENDING
+            constructor(executor) {
+                const resolve = (value) => {
+                    if (this.state === PENDING) {
+                        this.value = value
+                        this.state = FUFILLED
+                        this.onFulfilled(this.value)
+                    }
+                }
+                const reject = (reason) => {
+                    if (this.state === PENDING) {
+                        this.reason = reason
+                        this.state = REJECTED
+                        this.onRejected(this.reason)
+                    }
+                }
+                try {
+                    executor(resolve, reject)
+                } catch (error) {
+                    reject(error)
+                }
+            }
+            then(onFulfilled, onRejected) {
+                if (this.state === FUFILLED) {
+                    onFulfilled(this.value)
+                }
+                if (this.state === REJECTED) {
+                    onRejected(this.reason)
+                }
+                if (this.status === PENDING) {
+                    // 异步
+                    // 订阅
+                    this.onFulfilled = onFulfilled
+                    this.onRejected = onRejected
+                }
+            }
+        }
+        const p = new Promise((resolve, reject) => {
+            reject('失败')
+            // resolve('成功')
+        })
+        p.then(
+            (res) => {
+                console.log(res);
+            },
+            (err) => {
+                console.log(err);
+            }
+        )
+        // console.log(new Promise((resolve, reject) => {
+        //     reject("失败")
+        //     resolve("成功")
+
+        // }));
+        // const p1 = new Promise(() => { }) //Pending
+        // const p2 = new Promise((resolve) => resolve()) // fulfilled
+        // const p3 = new Promise((resolve, reject) => reject()) // rejected
+
+        // console.log(
+        //     'p1', p1,
+        //     'p2', p2,
+        //     'p3', p3
+        // )
+    </script>
+</body>
+
+</html>
