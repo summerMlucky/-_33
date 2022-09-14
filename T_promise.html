@@ -24,7 +24,8 @@
     //   - vue当中的自定义事件: $emit
     //   - eventBus 
     //   - promise 异步的时候
-    // 9. promise除了链式调用以外, 还可以多次调用, 没
+    // 9. promise除了链式调用以外, 还可以多次调用
+    // 10.
     const PENDING = 'pending'
     const FUFILLED = 'fulfilled'
     const REJECTED = 'rejected'
@@ -59,28 +60,52 @@
       }
 
       then(onFulfilled, onRejected) {
-        if (this.status === FUFILLED) {
-          onFulfilled(this.value)
-        }
 
-        if (this.status === REJECTED) {
-          onRejected(this.reason)
-        }
+        const p2 = new Promise((resolve, reject) => {
+          if (this.status === FUFILLED) {
+            queueMicrotask(() => {
+              try {
+                onFulfilled(this.value)
+              } catch (error) {
+                reject(error)
+              }
+            })
 
-        if (this.status === PENDING) {
-          // 异步
-          // 订阅
-          // this.onFulfilled = onFulfilled
-          // this.onRejected = onRejected
-          this.onFulfilledCallBacks.push(() => {
-            // 多写逻辑
-            onFulfilled(this.value)
-          })
+          }
 
-          this.onRejectedCallBacks.push(() => {
-            onRejected(this.reason)
-          })
-        }
+          if (this.status === REJECTED) {
+            queueMicrotask(() => {
+              try {
+                onFulfilled(this.reason)
+              } catch (error) {
+                reject(error)
+              }
+            })
+          }
+
+          if (this.status === PENDING) {
+            // 异步
+            // 订阅
+            // this.onFulfilled = onFulfilled
+            // this.onRejected = onRejected
+            this.onFulfilledCallBacks.push(() => {
+              // 多写逻辑
+              queueMicrotask(() => {
+              try {
+                onFulfilled(this.value)
+              } catch (error) {
+                reject(error)
+              }
+            })
+
+            })
+
+            this.onRejectedCallBacks.push(() => {
+              onRejected(this.reason)
+            })
+          }
+        })
+        return p2
       }
     }
 
