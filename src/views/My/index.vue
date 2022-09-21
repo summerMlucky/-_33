@@ -26,6 +26,7 @@
               align="center"
             >
               <van-button size="mini" round class="edit_btn"
+              @click="$router.push('/user')"
                 >编辑按钮</van-button
               >
             </van-row>

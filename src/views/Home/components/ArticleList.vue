@@ -24,6 +24,14 @@
           v-for="item in articlesList"
           :key="item.art_id"
           :article="item"
+          @click.native="
+            $router.push({
+              path: '/detail',
+              query: {
+                article_id: item.art_id
+              }
+            })
+          "
         ></article-list>
       </van-list>
     </van-pull-refresh>
@@ -56,6 +64,9 @@ export default {
     this.getFirstPageArticle()
   },
   methods: {
+    aa() {
+      console.log(111)
+    },
     async getFirstPageArticle() {
       // new Date().valueof()
       //   Date.now()
@@ -112,7 +123,7 @@ export default {
   height: calc(100vh - 92px - 83px - 100px);
   overflow: auto;
   // &: 代表当前元素他爹
-/*   .a{
+  /*   .a{
     $.b{}
     相当于 .a.b{}
   } */

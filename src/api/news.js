@@ -12,3 +12,14 @@ export const getArticleAPI = (channelId, timestamp) => {
     }
   })
 }
+/**
+ * 获取新闻详情
+ * @param {Number} article_id
+ * @returns Promise
+ */
+/* eslint-disable */
+export const getDetailArticleAPI = (article_id) => {
+  return axios({
+    url: '/v1_0/articles/' + article_id
+  })
+}
